@@ -17,7 +17,7 @@ internal class Worker
     public string City { get; set; }
     public string Phone { get; set; }
     public int Age { get; set; }
-    public CV Cv { get; set; }
+    public CV? Cv { get; set; }
     public string Mail { get; set; }
     public string Password { get; set; }
     public int LikeCount { get; set; }

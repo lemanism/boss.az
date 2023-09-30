@@ -12,9 +12,23 @@ namespace ConsoleApp7.models;
 
 static class Menu_1
 {
+    
+
+
+
     static public void Start()
     {
 
+        Console.WriteLine("   _____      _          _       _     ");
+        Console.WriteLine("  / ____|    | |        | |     | |    ");
+        Console.WriteLine(" | |  __  ___| |_       | | ___ | |__  ");
+        Console.WriteLine(" | | |_ |/ _ \\ __|  _   | |/ _ \\| '_ \\ ");
+        Console.WriteLine(" | |__| |  __/ |_  | |__| | (_) | |_) |");
+        Console.WriteLine("  \\_____|\\___|\\__|  \\____/ \\___/|_.__/ ");
+
+
+
+        Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n");
         int selectedOption = 0;
         string[] menuOptions = { "Sign In", "Sign Up", "Guest", "Exit" };
 
@@ -24,7 +38,7 @@ static class Menu_1
         {
             Console.Clear();
 
-            // Display menu options
+            Console.Write("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t");
             for (int i = 0; i < menuOptions.Length; i++)
             {
                 if (i == selectedOption)
@@ -37,11 +51,13 @@ static class Menu_1
                     Console.ForegroundColor = ConsoleColor.DarkRed;
                     Console.BackgroundColor = ConsoleColor.Black;
                 }
-
-                Console.WriteLine(menuOptions[i]);
+                
+                
+                Console.Write("\n\t\t\t\t\t\t\t");
+                Console.Write(menuOptions[i]);
             }
 
-            // Read user input
+            
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
             {
@@ -57,7 +73,7 @@ static class Menu_1
 
                     if (selectedOption == menuOptions.Length - 1)
                     {
-                        // Exit the program
+                        
                         Environment.Exit(0);
                     }
                     // buraya lazimi funksiyalari duz
@@ -92,7 +108,20 @@ static class Menu_1
 
 
     }
+    static public void GetJobLogo()
+    {
 
+        //Console.Write("\t\t\t\t\t\t\t\t");
+        Console.Write(
+            @"
+   _____      _          _       _     
+  / ____|    | |        | |     | |    
+ | |  __  ___| |_       | | ___ | |__  
+ | | |_ |/ _ \ __|  _   | |/ _ \| '_ \ 
+ | |__| |  __/ |_  | |__| | (_) | |_) |
+  \_____|\___|\__|  \____/ \___/|_.__/                                       
+");
+    }
 
     public static void Menu2()
     {
@@ -241,6 +270,7 @@ static class Menu_1
                             Console.ReadKey(true);
                         }
                         
+
                         else if (menuOptions[selectedOption] == "Back")
                         {
 
@@ -260,7 +290,7 @@ static class Menu_1
 
 
 
-        }
+         }
 
         public static void SignInMenuForWorker()
         {
@@ -301,7 +331,7 @@ static class Menu_1
                 else { Console.WriteLine("Incorrect Password!"); }
 
             }
-            else { Console.WriteLine("Incorrect Mail!"); }
+            else { Console.WriteLine("Incorrect Mail Format!"); }
             
         }
 
@@ -375,13 +405,58 @@ static class Menu_1
             Console.WriteLine("Enter password: ");
             string password = Console.ReadLine();
 
-            Employer emp = new(name, surname, city, phone, age, mail, password);
-            emp.SignUp();
+            
+        bool check = false;
+        string pattern_mail = @"[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$";
+        string pattern_pw = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?\W).{8,16}$";
+        Regex regex_mail = new(pattern_mail);
+        Regex regex_pw = new(pattern_pw);
 
-            string jsonstr = JsonSerializer.Serialize(emp);
-            Console.WriteLine(jsonstr);
+        if (regex_mail.IsMatch(pattern_mail))
+        {
+            if (regex_mail.IsMatch(pattern_pw))
 
-            File.WriteAllText("../../../employers.json", jsonstr);
+            {
+                foreach (var item in DATABASE.employers)
+                {
+                    if (item.Mail == mail)
+                    {
+                        Console.WriteLine("Incorrect mail!");
+                        check = true;
+                        break;
+                    }
+
+                }
+                if (check == false)
+                {
+                    Employer emp = new(name, surname, city, phone, age, mail, password);
+                    string jsonstr = JsonSerializer.Serialize(emp);
+                    Console.WriteLine(jsonstr);
+
+                    File.WriteAllText("../../../employers.json", jsonstr);
+                    DATABASE.employers.Add(emp);
+                    Console.WriteLine("Sign in process ended succesfully!");
+
+
+                    SignInMenuForEmployer();
+
+                }
+
+            }
+
+
+            else
+            {
+                Console.WriteLine("Incorrect password!");
+            }
+        }
+
+        else
+        {
+            Console.WriteLine("Incorrect mail!");
+        }
+
+        
 
 
         }
@@ -413,6 +488,10 @@ static class Menu_1
                             if (password == item.Password)
                             {
                                 Console.WriteLine($"Welcome {item.Name}!");
+
+                                MenuForEmployer(item);
+
+
                             }
                             else { Console.WriteLine("Incorrect Password!"); }
                         }
@@ -427,8 +506,14 @@ static class Menu_1
             else { Console.WriteLine("Incorrect Mail!"); }
         }
     
-
-
+    
+    public static void ShowAllLikesForEmp(Employer emp)
+    {
+        foreach (var item in emp.Liked)
+        {
+            Console.WriteLine(item);
+        }
+    }
 
      public static void ShowAllWorkers()
      {
@@ -440,6 +525,101 @@ static class Menu_1
             Console.WriteLine(item);
      }
 
+    public static void MenuForEmployer(Employer emp)
+    {
+        int selectedOption = 0;
+        string[] menuOptions = { "Show All Workers", "Notifications","See Liked Workers", "Exit" };
+
+        Console.CursorVisible = false;
+
+        while (true)
+        {
+            Console.Clear();
+
+
+            for (int i = 0; i < menuOptions.Length; i++)
+            {
+                if (i == selectedOption)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+
+                Console.WriteLine(menuOptions[i]);
+            }
+
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    if (selectedOption > 0)
+                        selectedOption--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    if (selectedOption < menuOptions.Length - 1)
+                        selectedOption++;
+                    break;
+                case ConsoleKey.Enter:
+
+                    if (selectedOption == menuOptions.Length - 1)
+                    {
+
+                        Environment.Exit(0);
+                    }
+                    // buraya lazimi funksiyalari duz
+                    else if (menuOptions[selectedOption] == "Show All Workers")
+                    {
+
+                        Console.Clear();
+                        ShowAllWorkers();
+                        
+                        Console.WriteLine("Do you want to like any worker? (1 - yes, 2 - no)");
+                        string choice = Console.ReadLine();
+                        if (choice == "1")
+                        {
+                            int id = Convert.ToInt32(Console.ReadLine);
+                            foreach (var item in DATABASE.workers)
+                            {
+                                if (item.Id == id)
+                                {
+                                    item.LikeCount++;
+                                }
+                            }
+                        }
+                        
+
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey(true);
+                    }
+                    else if (menuOptions[selectedOption] == "Notifications") // classi duzelt
+                    {
+                        Console.Clear();
+                        
+
+                        Console.ReadKey(true);
+                    }
+
+                    else if (menuOptions[selectedOption] == "See Liked Workers")
+                    {
+
+                        Console.Clear();
+                        ShowAllLikesForEmp(emp);
+
+                        Console.ReadKey(true);
+                    }
+                    break;
+            }
+        }
+
+
+
+    }
+}
 
     
-}

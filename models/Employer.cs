@@ -25,8 +25,8 @@ internal class Employer
     public List<Worker> Vacancies { get; set; }
 
     public List<Worker> Liked { get; set; }
-
-
+    
+    public NotificationClass Notification { }
     public Employer(string name, string surname, string city, string phone, int age, string mail,string password)
     {
         
@@ -41,49 +41,8 @@ internal class Employer
  
     }
 
-    public void SignUp()
-    {
-        string pattern_mail = @"[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$";
-        string pattern_pw = @"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?\W).{8,16}$";
-        Regex regex_mail = new(pattern_mail);
-        Regex regex_pw = new(pattern_pw);
-
-        if (regex_mail.IsMatch(pattern_mail))
-        {
-            if (regex_mail.IsMatch(pattern_pw))
-
-            {
-                MailMessage message = new MailMessage();
-                SmtpClient client = new SmtpClient();
-                client.Credentials = new NetworkCredential("bossazsmtp123@gmail.com", "bossaz123");
-                client.Port = 587;
-                client.Host = "smtp.gmail.com";
-                client.EnableSsl = true;
-
-                message.To.Add(this.Mail);
-                message.Subject = "Sign Up Process";
-                message.From = new MailAddress("bossazsmtp123@gmail.com");
-                message.Body = Random.Shared.Next(100000, 999999).ToString();
-
-                client.Send(message);
-                Console.WriteLine("Verification code sent!");
-
-            }
-
-
-            else
-            {
-                Console.WriteLine("Incorrect mail!");
-            }
-        }
-
-        else
-        {
-            Console.WriteLine("Incorrect mail!");
-        }
-      
-    }
-
+    
+    
 
     public void Like(Worker worker)
     {
@@ -119,6 +78,11 @@ internal class Employer
     public void AddVacation(Worker worker)
     {
         Vacancies.Add(worker);
+    }
+
+    public void Notify()
+    {
+
     }
 
 
